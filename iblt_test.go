@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"sort"
 	"testing"
+	"reflect"
 
 	"github.com/davecgh/go-spew/spew"
 )
@@ -272,4 +273,34 @@ func TestEncodeDecode(t *testing.T) {
 		}
 	}()
 	f.encode(random(1 << 16))
+}
+
+func TestCellsNotPower2(t *testing.T) {
+    var sizes = []int{10, 20, 50, 100}
+    var funcs = 3
+
+    for _, sz := range sizes {
+        I := New(funcs, sz)
+        var arr = [][]byte{}
+        for i := 0; i < sz/funcs/3; i++ {
+            item := make([]byte, 5)
+            rand.Read(item)
+            arr = append(arr, item)
+            I.Add(item)
+        }
+
+        decodedIBLT, _ := I.Decode()
+
+        for _, item := range arr {
+            var found = false
+            for _, v := range decodedIBLT.Added {
+                if reflect.DeepEqual(v, item) {
+                    found = true
+                }
+            }
+            if !found {
+                t.Error("Added item not decoded")
+            }
+        }
+    }
 }

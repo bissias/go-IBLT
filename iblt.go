@@ -96,15 +96,6 @@ func (f *Filter) UnmarshalBinary(data []byte) error {
 
 // New constructs a new Filter.
 func New(k, l int) *Filter {
-	if k >= 10 || k < 1 {
-		panic("k should be between 1 and 10")
-	}
-	if l/k < 2 {
-		panic("l should be at least 2*k")
-	}
-	if l&(l-1) != 0 {
-		panic("l should be a power of two")
-	}
 	var shift uint16
 	for ll := l; ll != 0; ll >>= 1 {
 		shift++

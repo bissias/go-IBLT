@@ -14,6 +14,7 @@ import (
 	"encoding/gob"
 	"errors"
 	"log"
+	"math"
 
 	"github.com/dchest/siphash"
 )
@@ -92,6 +93,13 @@ func (f *Filter) UnmarshalBinary(data []byte) error {
 		f.valueSums[k].b = v
 	}
 	return nil
+}
+
+func NewFromNumItems(numItems int) *Filter {
+    ibltParam := ibltParamMap[numItems]
+    numCells := int(math.Ceil(float64(numItems) * float64(ibltParam.numHashFuncs) * ibltParam.itemOverhead))
+
+    return New(ibltParam.numHashFuncs, numCells)
 }
 
 // New constructs a new Filter.

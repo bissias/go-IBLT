@@ -304,3 +304,32 @@ func TestCellsNotPower2(t *testing.T) {
         }
     }
 }
+
+func TestNewFromNumItems(t *testing.T) {
+    var itemCts = []int{10, 20, 50, 100}
+
+    for _, numItems := range itemCts {
+        I := NewFromNumItems(numItems)
+        var arr = [][]byte{}
+        for i := 0; i < numItems; i++ {
+            item := make([]byte, 5)
+            rand.Read(item)
+            arr = append(arr, item)
+            I.Add(item)
+        }
+
+        decodedIBLT, _ := I.Decode()
+
+        for _, item := range arr {
+            var found = false
+            for _, v := range decodedIBLT.Added {
+                if reflect.DeepEqual(v, item) {
+                    found = true
+                }
+            }
+            if !found {
+                t.Error("Added item not decoded")
+            }
+        }
+    }
+}
